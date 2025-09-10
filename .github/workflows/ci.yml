@@ -26,19 +26,16 @@ jobs:
         with:
           node-version: 22
           cache: 'npm'
+          cache-dependency-path: blockchain/package-lock.json
 
-      - name: Install dependencies (npm ci with legacy peer deps)
+      - name: Install dependencies
+        working-directory: blockchain
         run: npm ci --legacy-peer-deps
 
       - name: Compile contracts
+        working-directory: blockchain
         run: npx hardhat compile
 
       - name: Run tests
+        working-directory: blockchain
         run: npx hardhat test --show-stack-traces
-
-      - name: Upload test results (Junit) (optional)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-output
-          path: ./test-output || ./mochahub || ''
