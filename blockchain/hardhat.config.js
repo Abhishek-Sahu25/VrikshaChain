@@ -20,6 +20,9 @@ module.exports = {
       chainId: 11155111
     }
   },
+  etherscan: {
+    apiKey: process.env.ETHERSCAN_API_KEY
+  },
   paths: {
     artifacts: "./artifacts",
     sources: "./contracts",
