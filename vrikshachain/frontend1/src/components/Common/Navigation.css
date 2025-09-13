@@ -1,0 +1,237 @@
+.navigation {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding: 1rem 0;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.navigation.scrolled {
+  background: rgba(23, 72, 47, 0.95);
+  padding: 0.8rem 0;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+}
+
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: white;
+  text-decoration: none;
+}
+
+.logo-leaf {
+  font-size: 2rem;
+  filter: drop-shadow(0 0 5px rgba(104, 196, 128, 0.5));
+  animation: pulse 2s ease-in-out infinite alternate;
+}
+
+.logo-text {
+  background: linear-gradient(135deg, #68c480, #3a8c55);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.nav-link {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  position: relative;
+  padding: 0.5rem 0;
+  transition: all 0.3s ease;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #68c480, #3a8c55);
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+.nav-link:hover {
+  color: #68c480;
+  transform: translateY(-2px);
+}
+
+.nav-auth-btn {
+  background: linear-gradient(135deg, #68c480, #3a8c55);
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 50px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.nav-auth-btn:hover {
+  transform: translateY(-2px) rotateX(10deg);
+  box-shadow: 0 5px 15px rgba(104, 196, 128, 0.4);
+}
+
+.mobile-menu-toggle {
+  display: none;
+  flex-direction: column;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+.mobile-menu-toggle span {
+  width: 25px;
+  height: 3px;
+  background: white;
+  margin: 3px 0;
+  transition: 0.3s;
+  border-radius: 2px;
+}
+
+.nav-herbs {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.nav-herbs .floating-herb {
+  position: absolute;
+  font-size: 1.2rem;
+  opacity: 0.2;
+  animation: floatNavHerb 15s infinite linear;
+}
+
+.nav-herbs .floating-herb:nth-child(1) {
+  top: 20%;
+  left: 10%;
+  animation-delay: 0s;
+  color: #68c480;
+}
+
+.nav-herbs .floating-herb:nth-child(2) {
+  top: 60%;
+  left: 80%;
+  animation-delay: -5s;
+  color: #4caf50;
+}
+
+.nav-herbs .floating-herb:nth-child(3) {
+  top: 40%;
+  left: 70%;
+  animation-delay: -10s;
+  color: #8bc34a;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.1); }
+}
+
+@keyframes floatNavHerb {
+  0% {
+    transform: translateY(0) rotate(0deg) scale(1);
+    opacity: 0.2;
+  }
+  25% {
+    transform: translateY(-10px) rotate(5deg) scale(1.1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(0) rotate(0deg) scale(1);
+    opacity: 0.2;
+  }
+  75% {
+    transform: translateY(10px) rotate(-5deg) scale(0.9);
+    opacity: 0.1;
+  }
+  100% {
+    transform: translateY(0) rotate(0deg) scale(1);
+    opacity: 0.2;
+  }
+}
+
+@media (max-width: 768px) {
+  .mobile-menu-toggle {
+    display: flex;
+  }
+  
+  .nav-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: rgba(23, 72, 47, 0.98);
+    flex-direction: column;
+    padding: 1rem;
+    transform: translateY(-100%);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+  }
+  
+  .nav-menu.active {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .nav-link {
+    padding: 1rem;
+    width: 100%;
+    text-align: center;
+  }
+  
+  .nav-auth-btn {
+    margin-top: 1rem;
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-container {
+    padding: 0 1rem;
+  }
+  
+  .nav-logo {
+    font-size: 1.2rem;
+  }
+  
+  .logo-leaf {
+    font-size: 1.5rem;
+  }
+}

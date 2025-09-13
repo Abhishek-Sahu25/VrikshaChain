@@ -1,0 +1,445 @@
+.manager-dashboard {
+  padding: 2rem;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8eaf6 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.dashboard-hero {
+  text-align: center;
+  margin-bottom: 3rem;
+  position: relative;
+  z-index: 2;
+}
+
+.dashboard-hero h2 {
+  font-size: 2.5rem;
+  color: #283593;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.dashboard-hero p {
+  color: #546e7a;
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.alerts-section {
+  margin-bottom: 2rem;
+  position: relative;
+  z-index: 2;
+}
+
+.alerts-section h3 {
+  color: #283593;
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+}
+
+.alerts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.alert-card-3d {
+  display: flex;
+  align-items: center;
+  padding: 1.2rem;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  background: white;
+}
+
+.alert-card-3d:hover {
+  transform: translateY(-5px) rotateX(3deg);
+  box-shadow: 0 12px 30px rgba(57, 73, 171, 0.2);
+}
+
+.alert-card-3d.warning {
+  border-left: 4px solid #FF9800;
+}
+
+.alert-card-3d.info {
+  border-left: 4px solid #2196F3;
+}
+
+.alert-card-3d.success {
+  border-left: 4px solid #4CAF50;
+}
+
+.alert-icon {
+  font-size: 1.5rem;
+  margin-right: 1rem;
+  filter: drop-shadow(0 0 5px rgba(57, 73, 171, 0.3));
+}
+
+.alert-content p {
+  margin: 0;
+  font-weight: 500;
+  color: #37474F;
+}
+
+.alert-time {
+  font-size: 0.8rem;
+  color: #78909C;
+}
+
+.stats-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+  position: relative;
+  z-index: 2;
+}
+
+.stat-card-3d {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 1.5rem;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(57, 73, 171, 0.2);
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.stat-card-3d:hover {
+  transform: translateY(-8px) rotateX(5deg);
+  box-shadow: 0 20px 40px rgba(57, 73, 171, 0.3);
+}
+
+.stat-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.8rem;
+  filter: drop-shadow(0 0 8px rgba(57, 73, 171, 0.3));
+  animation: float 3s ease-in-out infinite;
+}
+
+.stat-card-3d h3 {
+  color: #283593;
+  margin-bottom: 0.8rem;
+  font-size: 1rem;
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #3F51B5;
+  margin: 0;
+}
+
+.dashboard-content {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+  margin-bottom: 3rem;
+  position: relative;
+  z-index: 2;
+}
+
+.recent-activities,
+.quick-actions {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(57, 73, 171, 0.2);
+}
+
+.recent-activities h3,
+.quick-actions h3 {
+  color: #283593;
+  margin-bottom: 1.5rem;
+  font-size: 1.3rem;
+  border-bottom: 2px solid #3F51B5;
+  padding-bottom: 0.5rem;
+}
+
+.activities-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.activity-item-3d {
+  display: flex;
+  padding: 1rem;
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  transform-style: preserve-3d;
+}
+
+.activity-item-3d:hover {
+  transform: translateY(-3px) rotateX(2deg);
+  box-shadow: 0 6px 20px rgba(57, 73, 171, 0.2);
+}
+
+.activity-icon {
+  color: #3F51B5;
+  font-size: 1.2rem;
+  margin-right: 1rem;
+}
+
+.activity-details {
+  flex: 1;
+}
+
+.activity-action {
+  font-weight: 500;
+  margin-bottom: 0.3rem;
+  color: #37474F;
+}
+
+.activity-meta {
+  color: #78909C;
+  font-size: 0.9rem;
+}
+
+.action-buttons-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+}
+
+.action-btn-3d {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(135deg, #3F51B5, #283593);
+  color: white;
+  border: none;
+  padding: 1.2rem 0.8rem;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.action-btn-3d:hover {
+  transform: translateY(-5px) rotateX(8deg);
+  box-shadow: 0 10px 25px rgba(57, 73, 171, 0.4);
+}
+
+.action-icon {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+}
+
+.blockchain-visual {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(57, 73, 171, 0.2);
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+
+.blockchain-visual h3 {
+  color: #283593;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+}
+
+.blockchain-animation {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  perspective: 1000px;
+}
+
+.block-node {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #3F51B5, #283593);
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+  animation: blockPulse 2s ease-in-out infinite;
+  transform-style: preserve-3d;
+  box-shadow: 0 5px 15px rgba(57, 73, 171, 0.3);
+}
+
+.block-node::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    linear-gradient(90deg, transparent 45%, rgba(255, 255, 255, 0.3) 50%, transparent 55%),
+    linear-gradient(transparent 45%, rgba(255, 255, 255, 0.3) 50%, transparent 55%);
+  background-size: 10px 10px;
+  animation: dataFlow 3s linear infinite;
+}
+
+.block-node:nth-child(2) { animation-delay: 0.2s; }
+.block-node:nth-child(3) { animation-delay: 0.4s; }
+.block-node:nth-child(4) { animation-delay: 0.6s; }
+
+.block-connector {
+  width: 30px;
+  height: 4px;
+  background: linear-gradient(90deg, #3F51B5, #283593);
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+}
+
+.block-connector::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+  animation: connectorFlow 2s linear infinite;
+}
+
+.blockchain-visual p {
+  color: #546e7a;
+  font-weight: 500;
+}
+
+.floating-manager-elements {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.manager-icon {
+  position: absolute;
+  font-size: 2rem;
+  opacity: 0.1;
+  animation: floatManagerIcon 15s infinite linear;
+}
+
+.manager-icon:nth-child(1) {
+  top: 20%;
+  left: 5%;
+  animation-delay: 0s;
+  color: #3F51B5;
+}
+
+.manager-icon:nth-child(2) {
+  top: 70%;
+  left: 90%;
+  animation-delay: -5s;
+  color: #283593;
+}
+
+.manager-icon:nth-child(3) {
+  top: 40%;
+  left: 85%;
+  animation-delay: -10s;
+  color: #1A237E;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(5deg); }
+}
+
+@keyframes blockPulse {
+  0%, 100% { transform: translateZ(0) scale(1); }
+  50% { transform: translateZ(20px) scale(1.05); }
+}
+
+@keyframes dataFlow {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+@keyframes connectorFlow {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+@keyframes floatManagerIcon {
+  0% {
+    transform: translateY(0) rotate(0deg) scale(1);
+    opacity: 0.1;
+  }
+  25% {
+    transform: translateY(-30px) rotate(5deg) scale(1.1);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translateY(0) rotate(0deg) scale(1);
+    opacity: 0.1;
+  }
+  75% {
+    transform: translateY(30px) rotate(-5deg) scale(0.9);
+    opacity: 0.05;
+  }
+  100% {
+    transform: translateY(0) rotate(0deg) scale(1);
+    opacity: 0.1;
+  }
+}
+
+@media (max-width: 968px) {
+  .manager-dashboard {
+    padding: 1rem;
+  }
+  
+  .stats-cards {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+  
+  .dashboard-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .action-buttons-grid {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  }
+  
+  .dashboard-hero h2 {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .alerts-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .blockchain-animation {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .block-node {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .block-connector {
+    width: 20px;
+  }
+}

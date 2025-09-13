@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supply Chain Traceability - Test Interface</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.1em;
+        }
+
+        .auth-section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #3498db;
+            font-size: 1.5em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        button {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 5px 5px 5px 0;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        button:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .response-area {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            min-height: 200px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+
+        .success {
+            border-color: #27ae60;
+            background-color: #d5fdd5;
+        }
+
+        .error {
+            border-color: #e74c3c;
+            background-color: #fdd5d5;
+        }
+
+        .user-info {
+            background: #3498db;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e1e8ed;
+        }
+
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            border-bottom-color: #3498db;
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .file-input {
+            border: 2px dashed #bdc3c7;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-input:hover {
+            border-color: #3498db;
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+
+        .batch-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .batch-item {
+            background: #f8f9fa;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .batch-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .status-collected { background: #f39c12; color: white; }
+        .status-tested { background: #3498db; color: white; }
+        .status-processed { background: #9b59b6; color: white; }
+        .status-manufactured { background: #27ae60; color: white; }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔗 Supply Chain Traceability System</h1>
+            <p>Test Interface for SIH PS 25027 - Blockchain-based Supply Chain Backend</p>
+        </div>
+
+        <div class="auth-section">
+            <div id="loginForm">
+                <h2>🔐 Authentication</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" value="admin@supplychain.com" placeholder="Enter email">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" value="admin123" placeholder="Enter password">
+                    </div>
+                </div>
+                <button onclick="login()">Login</button>
+                <button onclick="fillTestCredentials('farmer1@test.com', 'password123')">Farmer Login</button>
+                <button onclick="fillTestCredentials('lab1@test.com', 'password123')">Lab Login</button>
+                <button onclick="fillTestCredentials('processor1@test.com', 'password123')">Processor Login</button>
+                <button onclick="fillTestCredentials('manufacturer1@test.com', 'password123')">Manufacturer Login</button>
+            </div>
+
+            <div id="userInfo" style="display: none;">
+                <div class="user-info">
+                    <strong>👤 Logged in as:</strong> <span id="userName"></span> 
+                    <strong>Role:</strong> <span id="userRole"></span>
+                    <button onclick="logout()" style="float: right; background: rgba(255,255,255,0.2);">Logout</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="section">
+                <h2>📊 Data Submission</h2>
+                <div class="tabs">
+                    <div class="tab active" onclick="switchTab('collection')">Collection</div>
+                    <div class="tab" onclick="switchTab('testing')">Testing</div>
+                    <div class="tab" onclick="switchTab('processing')">Processing</div>
+                    <div class="tab" onclick="switchTab('manufacturing')">Manufacturing</div>
+                </div>
+
+                <div id="collection" class="tab-content active">
+                    <div class="form-group">
+                        <label for="batchId">Batch ID:</label>
+                        <input type="text" id="batchId" value="BATCH-002" placeholder="Enter batch ID">
+                    </div>
+                    <div class="form-group">
+                        <label for="productType">Product Type:</label>
+                        <input type="text" id="productType" value="Organic Rice" placeholder="Enter product type">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="form-group">
+                            <label for="quantity">Quantity:</label>
+                            <input type="number" id="quantity" value="500" placeholder="Enter quantity">
+                        </div>
+                        <div class="form-group">
+                            <label for="unit">Unit:</label>
+                            <select id="unit">
+                                <option value="kg">Kilograms</option>
+                                <option value="tons">Tons</option>
+                                <option value="pieces">Pieces</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="form-group">
+                            <label for="latitude">Latitude:</label>
+                            <input type="number" step="0.000001" id="latitude" value="19.1234" placeholder="Enter latitude">
+                        </div>
+                        <div class="form-group">
+                            <label for="longitude">Longitude:</label>
+                            <input type="number" step="0.000001" id="longitude" value="74.8567" placeholder="Enter longitude">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="weatherConditions">Weather Conditions:</label>
+                        <input type="text" id="weatherConditions" value="Sunny, 28°C, 65% humidity" placeholder="Describe weather">
+                    </div>
+                    <button onclick="submitCollectionEvent()">Submit Collection Event</button>
+                </div>
+
+                <div id="testing" class="tab-content">
+                    <div class="form-group">
+                        <label for="testBatchId">Batch ID:</label>
+                        <input type="text" id="testBatchId" value="BATCH-002" placeholder="Enter batch ID">
+                    </div>
+                    <div class="form-group">
+                        <label for="testParameters">Test Parameters (JSON):</label>
+                        <textarea id="testParameters" rows="3" placeholder='{"moisture": "max 14%", "purity": "min 95%"}'>{
+  "moisture": "max 14%",
+  "purity": "min 95%",
+  "pesticide": "not detected"
+}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="testResults">Test Results (JSON):</label>
+                        <textarea id="testResults" rows="3" placeholder='{"moisture": "12.5%", "purity": "97.8%"}'>{
+  "moisture": "12.5%",
+  "purity": "97.8%",
+  "pesticide": "not detected"
+}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="testPassed">Test Passed:</label>
+                        <select id="testPassed">
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <button onclick="submitQualityTest()">Submit Quality Test</button>
+                </div>
+
+                <div id="processing" class="tab-content">
+                    <div class="form-group">
+                        <label for="procBatchId">Batch ID:</label>
+                        <input type="text" id="procBatchId" value="BATCH-002" placeholder="Enter batch ID">
+                    </div>
+                    <div class="form-group">
+                        <label for="processType">Process Type:</label>
+                        <input type="text" id="processType" value="Cleaning and Milling" placeholder="Enter process type">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="form-group">
+                            <label for="inputQuantity">Input Quantity:</label>
+                            <input type="number" id="inputQuantity" value="500" placeholder="Enter input quantity">
+                        </div>
+                        <div class="form-group">
+                            <label for="outputQuantity">Output Quantity:</label>
+                            <input type="number" id="outputQuantity" value="480" placeholder="Enter output quantity">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="processConditions">Process Conditions (JSON):</label>
+                        <textarea id="processConditions" rows="2" placeholder='{"temperature": "25°C", "humidity": "45%"}'>{
+  "temperature": "25°C",
+  "humidity": "45%"
+}</textarea>
+                    </div>
+                    <button onclick="submitProcessingStep()">Submit Processing Step</button>
+                </div>
+
+                <div id="manufacturing" class="tab-content">
+                    <div class="form-group">
+                        <label for="mfgBatchId">Batch ID:</label>
+                        <input type="text" id="mfgBatchId" value="BATCH-002" placeholder="Enter batch ID">
+                    </div>
+                    <div class="form-group">
+                        <label for="finalQuantity">Final Quantity:</label>
+                        <input type="number" id="finalQuantity" value="450" placeholder="Enter final quantity">
+                    </div>
+                    <div class="form-group">
+                        <label for="packaging">Packaging:</label>
+                        <input type="text" id="packaging" value="5kg sealed bags" placeholder="Enter packaging details">
+                    </div>
+                    <div class="form-group">
+                        <label for="expiryDate">Expiry Date:</label>
+                        <input type="date" id="expiryDate" value="2025-09-11">
+                    </div>
+                    <button onclick="submitProductBatch()">Create Product Batch</button>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>🔍 Data Query</h2>
+                <div class="form-group">
+                    <label for="queryBatchId">Batch ID for Query:</label>
+                    <input type="text" id="queryBatchId" value="BATCH-001" placeholder="Enter batch ID">
+                </div>
+                <button onclick="getProvenance()">Get Full Provenance</button>
+                <button onclick="getBatchStatus()">Get Batch Status</button>
+                <button onclick="searchBatches()">Search All Batches</button>
+                <button onclick="getHarvestStats()">Get Harvest Statistics</button>
+
+                <div class="batch-list" id="batchList" style="display: none;">
+                    <h4>Available Batches:</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📋 API Response</h2>
+            <div id="responseArea" class="response-area">
+                Welcome to Supply Chain Traceability Test Interface!
+
+                🎯 Quick Start:
+                1. Login with any test account (credentials pre-filled)
+                2. Try submitting data based on your role
+                3. Query provenance data for any batch
+                4. Check the response in this area
+
+                📝 Sample Batch ID: BATCH-001 (pre-loaded with data)
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let authToken = null;
+        let currentUser = null;
+
+        // Authentication functions
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                showLoading('Logging in...');
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password }),
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    authToken = data.token;
+                    currentUser = data.user;
+                    
+                    document.getElementById('loginForm').style.display = 'none';
+                    document.getElementById('userInfo').style.display = 'block';
+                    document.getElementById('userName').textContent = data.user.fullName;
+                    document.getElementById('userRole').textContent = data.user.role;
+                    
+                    showResponse('Login successful!', 'success');
+                } else {
+                    showResponse('Login failed: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showResponse('Login error: ' + error.message, 'error');
+            }
+        }
+
+        function logout() {
+            authToken = null;
+            currentUser = null;
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('userInfo').style.display = 'none';
+            showResponse('Logged out successfully', 'success');
+        }
+
+        function fillTestCredentials(email, password) {
+            document.getElementById('email').value = email;
+            document.getElementById('password').value = password;
+        }
+
+        // Tab switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        // Data submission functions
+        async function submitCollectionEvent() {
+            if (!authToken) {
+                showResponse('Please login first', 'error');
+                return;
+            }
+
+            const data = {
+                batchId: document.getElementById('batchId').value,
+                productType: document.getElementById('productType').value,
+                quantity: document.getElementById('quantity').value,
+                unit: document.getElementById('unit').value,
+                latitude: document.getElementById('latitude').value,
+                longitude: document.getElementById('longitude').value,
+                weatherConditions: document.getElementById('weatherConditions').value,
+                organicCertified: 'true'
+            };
+
+            await submitData('/api/collection-event', data, 'Collection Event');
+        }
+
+        async function submitQualityTest() {
+            if (!authToken) {
+                showResponse('Please login first', 'error');
+                return;
+            }
+
+            const data = {
+                batchId: document.getElementById('testBatchId').value,
+                testParameters: document.getElementById('testParameters').value,
+                testResults: document.getElementById('testResults').value,
+                passed: document.getElementById('testPassed').value,
+                methodology: 'Standard Lab Testing Protocol',
+                equipment: 'Spectrophotometer, Moisture Analyzer'
+            };
+
+            await submitData('/api/quality-test', data, 'Quality Test');
+        }
+
+        async function submitProcessingStep() {
+            if (!authToken) {
+                showResponse('Please login first', 'error');
+                return;
+            }
+
+            const data = {
+                batchId: document.getElementById('procBatchId').value,
+                processType: document.getElementById('processType').value,
+                inputQuantity: document.getElementById('inputQuantity').value,
+                outputQuantity: document.getElementById('outputQuantity').value,
+                processConditions: document.getElementById('processConditions').value,
+                equipment: 'Industrial Mill, Cleaning Machine',
+                duration: '4 hours'
+            };
+
+            await submitData('/api/processing-step', data, 'Processing Step');
+        }
+
+        async function submitProductBatch() {
+            if (!authToken) {
+                showResponse('Please login first', 'error');
+                return;
+            }
+
+            const data = {
+                batchId: document.getElementById('mfgBatchId').value,
+                finalQuantity: document.getElementById('finalQuantity').value,
+                packaging: document.getElementById('packaging').value,
+                expiryDate: document.getElementById('expiryDate').value,
+                batchNumber: document.getElementById('mfgBatchId').value,
+                distributionChannels: 'Retail,Online,Wholesale'
+            };
+
+            await submitData('/api/product-batch', data, 'Product Batch');
+        }
+
+        async function submitData(endpoint, data, operation) {
+            try {
+                showLoading(`Submitting ${operation}...`);
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showResponse(`${operation} submitted successfully!\n\n` + JSON.stringify(result, null, 2), 'success');
+                } else {
+                    showResponse(`${operation} failed: ${result.message}\n\n` + JSON.stringify(result, null, 2), 'error');
+                }
+            } catch (error) {
+                showResponse(`${operation} error: ${error.message}`, 'error');
+            }
+        }
+
+        // Query functions
+        async function getProvenance() {
+            const batchId = document.getElementById('queryBatchId').value;
+            if (!batchId) {
+                showResponse('Please enter a batch ID', 'error');
+                return;
+            }
+
+            try {
+                showLoading('Fetching provenance data...');
+                const response = await fetch(`/api/provenance/${batchId}`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    showResponse('Provenance data retrieved successfully!\n\n' + JSON.stringify(data, null, 2), 'success');
+                } else {
+                    showResponse('Failed to get provenance: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showResponse('Provenance query error: ' + error.message, 'error');
+            }
+        }
+
+        async function getBatchStatus() {
+            const batchId = document.getElementById('queryBatchId').value;
+            if (!batchId) {
+                showResponse('Please enter a batch ID', 'error');
+                return;
+            }
+
+            try {
+                showLoading('Fetching batch status...');
+                const response = await fetch(`/api/batch/${batchId}/status`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    showResponse('Batch status retrieved successfully!\n\n' + JSON.stringify(data, null, 2), 'success');
+                } else {
+                    showResponse('Failed to get batch status: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showResponse('Batch status query error: ' + error.message, 'error');
+            }
+        }
+
+        async function searchBatches() {
+            try {
+                showLoading('Searching batches...');
+                const headers = {};
+                if (authToken) {
+                    headers['Authorization'] = `Bearer ${authToken}`;
+                }
+
+                const response = await fetch('/api/search/batches?limit=20', {
+                    headers: headers
+                });
+                const data = await response.json();
+
+                if (response.ok) {
+                    showResponse('Batch search completed!\n\n' + JSON.stringify(data, null, 2), 'success');
+                    displayBatchList(data.batches);
+                } else {
+                    showResponse('Failed to search batches: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showResponse('Batch search error: ' + error.message, 'error');
+            }
+        }
+
+        async function getHarvestStats() {
+            if (!authToken) {
+                showResponse('Please login first (Admin access required)', 'error');
+                return;
+            }
+
+            try {
+                showLoading('Fetching harvest statistics...');
+                const response = await fetch('/api/stats/harvest-volumes', {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                const data = await response.json();
+
+                if (response.ok) {
+                    showResponse('Harvest statistics retrieved successfully!\n\n' + JSON.stringify(data, null, 2), 'success');
+                } else {
+                    showResponse('Failed to get harvest stats: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showResponse('Harvest stats error: ' + error.message, 'error');
+            }
+        }
+
+        function displayBatchList(batches) {
+            const batchListDiv = document.getElementById('batchList');
+            if (batches && batches.length > 0) {
+                let html = '<h4>Available Batches:</h4>';
+                batches.forEach(batch => {
+                    const statusClass = `status-${batch.currentStatus.toLowerCase()}`;
+                    html += `
+                        <div class="batch-item" onclick="selectBatch('${batch.batchId}')">
+                            <strong>${batch.batchId}</strong> - ${batch.productType}
+                            <span class="status-badge ${statusClass}">${batch.currentStatus}</span>
+                            <br>
+                            <small>Collector: ${batch.collector || 'N/A'} | Quantity: ${batch.totalQuantity || 0} kg</small>
+                        </div>
+                    `;
+                });
+                batchListDiv.innerHTML = html;
+                batchListDiv.style.display = 'block';
+            } else {
+                batchListDiv.style.display = 'none';
+            }
+        }
+
+        function selectBatch(batchId) {
+            document.getElementById('queryBatchId').value = batchId;
+            showResponse(`Selected batch: ${batchId}\nClick "Get Full Provenance" or "Get Batch Status" to view details.`, 'success');
+        }
+
+        // Utility functions
+        function showResponse(message, type = '') {
+            const responseArea = document.getElementById('responseArea');
+            responseArea.textContent = message;
+            responseArea.className = 'response-area';
+            if (type) {
+                responseArea.classList.add(type);
+            }
+        }
+
+        function showLoading(message) {
+            const responseArea = document.getElementById('responseArea');
+            responseArea.innerHTML = message + '<span class="loading"></span>';
+            responseArea.className = 'response-area';
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set default expiry date to 1 year from now
+            const nextYear = new Date();
+            nextYear.setFullYear(nextYear.getFullYear() + 1);
+            document.getElementById('expiryDate').value = nextYear.toISOString().split('T')[0];
+
+            showResponse(`🎯 Supply Chain Traceability Test Interface Ready!
+
+📋 Quick Start Guide:
+1. Login with pre-filled admin credentials or switch to other roles
+2. Submit data based on your role (Collection → Testing → Processing → Manufacturing)
+3. Query provenance data using batch IDs
+4. Check responses in this area
+
+🔑 Test Accounts:
+• Admin: admin@supplychain.com / admin123
+• Farmer: farmer1@test.com / password123  
+• Lab: lab1@test.com / password123
+• Processor: processor1@test.com / password123
+• Manufacturer: manufacturer1@test.com / password123
+
+📊 Sample Data:
+• BATCH-001: Complete traceability data (pre-loaded)
+• BATCH-002: Use for testing new submissions
+
+🚀 Backend API is running on: ${window.location.origin}/api`);
+        });
+
+        // Demo functions for quick testing
+        async function runDemo() {
+            showResponse('🚀 Running demo workflow...\n\n', 'success');
+            
+            // Login as farmer
+            document.getElementById('email').value = 'farmer1@test.com';
+            document.getElementById('password').value = 'password123';
+            await login();
+            
+            setTimeout(async () => {
+                // Submit collection event
+                document.getElementById('batchId').value = 'DEMO-' + Date.now();
+                await submitCollectionEvent();
+                
+                setTimeout(() => {
+                    // Query the batch
+                    document.getElementById('queryBatchId').value = document.getElementById('batchId').value;
+                    getProvenance();
+                }, 2000);
+            }, 1000);
+        }
+
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case 'Enter':
+                        if (!authToken) {
+                            login();
+                        }
+                        break;
+                    case '1':
+                        if (authToken) {
+                            switchTab('collection');
+                            document.getElementById('collection').querySelector('button').click();
+                        }
+                        break;
+                    case '2':
+                        if (authToken) {
+                            getProvenance();
+                        }
+                        break;
+                }
+            }
+        });
+
+        // Auto-fill batch IDs across tabs
+        function syncBatchIds() {
+            const mainBatchId = document.getElementById('batchId').value;
+            if (mainBatchId) {
+                document.getElementById('testBatchId').value = mainBatchId;
+                document.getElementById('procBatchId').value = mainBatchId;
+                document.getElementById('mfgBatchId').value = mainBatchId;
+                document.getElementById('queryBatchId').value = mainBatchId;
+            }
+        }
+
+        // Add event listeners for batch ID synchronization
+        document.getElementById('batchId').addEventListener('input', syncBatchIds);
+    </script>
+</body>
+</html>

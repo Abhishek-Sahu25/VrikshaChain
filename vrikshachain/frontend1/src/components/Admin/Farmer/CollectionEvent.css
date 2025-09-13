@@ -1,0 +1,308 @@
+.collection-event {
+  padding: 2rem;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8fbf9 0%, #e8f5e9 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.event-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  position: relative;
+  z-index: 2;
+}
+
+.event-header h2 {
+  font-size: 2.5rem;
+  color: #1b5e20;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.event-header p {
+  color: #546e7a;
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.collection-form-3d {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 2.5rem;
+  border-radius: 25px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(104, 196, 128, 0.3);
+  margin-bottom: 3rem;
+  position: relative;
+  z-index: 2;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.collection-form-3d::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(135deg, #68c480, #3a8c55, #68c480);
+  border-radius: 27px;
+  z-index: -1;
+  opacity: 0.1;
+  animation: borderGlow 3s ease-in-out infinite alternate;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.form-group-3d {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.form-group-3d label {
+  color: #1b5e20;
+  font-weight: 600;
+  margin-bottom: 0.8rem;
+  font-size: 1rem;
+}
+
+.form-group-3d input,
+.form-group-3d select,
+.form-group-3d textarea {
+  padding: 1.2rem 1.5rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 15px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: white;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.form-group-3d input:focus,
+.form-group-3d select:focus,
+.form-group-3d textarea:focus {
+  outline: none;
+  border-color: #68c480;
+  box-shadow: 0 0 0 3px rgba(104, 196, 128, 0.2);
+  transform: translateY(-3px) rotateX(2deg);
+}
+
+.gps-btn {
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(104, 196, 128, 0.1);
+  border: 1px solid #68c480;
+  border-radius: 10px;
+  color: #1b5e20;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.gps-btn:hover {
+  background: #68c480;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.form-actions {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.submit-btn-3d {
+  background: linear-gradient(135deg, #68c480, #3a8c55);
+  color: white;
+  border: none;
+  padding: 1.5rem 3rem;
+  border-radius: 50px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  box-shadow: 0 15px 35px rgba(104, 196, 128, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.submit-btn-3d::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transform: rotate(45deg);
+  animation: shine 2s infinite;
+}
+
+.submit-btn-3d:hover {
+  transform: translateY(-5px) rotateX(10deg);
+  box-shadow: 0 20px 45px rgba(104, 196, 128, 0.6);
+}
+
+.collection-preview {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(104, 196, 128, 0.2);
+  position: relative;
+  z-index: 2;
+}
+
+.collection-preview h3 {
+  color: #1b5e20;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.preview-card-3d {
+  background: white;
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  animation: cardFloat 4s ease-in-out infinite;
+}
+
+.preview-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.preview-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.preview-label {
+  font-weight: 600;
+  color: #1b5e20;
+  font-size: 0.9rem;
+}
+
+.preview-value {
+  color: #546e7a;
+  font-size: 1.1rem;
+}
+
+.floating-herbs {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.herb-float {
+  position: absolute;
+  font-size: 2rem;
+  opacity: 0.1;
+  animation: floatHerb 15s infinite linear;
+}
+
+.herb-float:nth-child(1) {
+  top: 20%;
+  left: 5%;
+  animation-delay: 0s;
+  color: #68c480;
+}
+
+.herb-float:nth-child(2) {
+  top: 70%;
+  left: 90%;
+  animation-delay: -5s;
+  color: #4caf50;
+}
+
+.herb-float:nth-child(3) {
+  top: 40%;
+  left: 85%;
+  animation-delay: -10s;
+  color: #8bc34a;
+}
+
+@keyframes borderGlow {
+  0% { opacity: 0.1; }
+  100% { opacity: 0.3; }
+}
+
+@keyframes shine {
+  0% { transform: translateX(-100%) rotate(45deg); }
+  100% { transform: translateX(100%) rotate(45deg); }
+}
+
+@keyframes cardFloat {
+  0%, 100% { transform: translateY(0) rotateX(0deg); }
+  50% { transform: translateY(-10px) rotateX(5deg); }
+}
+
+@keyframes floatHerb {
+  0% {
+    transform: translateY(0) rotate(0deg) scale(1);
+    opacity: 0.1;
+  }
+  25% {
+    transform: translateY(-30px) rotate(5deg) scale(1.1);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translateY(0) rotate(0deg) scale(1);
+    opacity: 0.1;
+  }
+  75% {
+    transform: translateY(30px) rotate(-5deg) scale(0.9);
+    opacity: 0.05;
+  }
+  100% {
+    transform: translateY(0) rotate(0deg) scale(1);
+    opacity: 0.1;
+  }
+}
+
+@media (max-width: 768px) {
+  .collection-event {
+    padding: 1rem;
+  }
+  
+  .collection-form-3d {
+    padding: 1.5rem;
+  }
+  
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .preview-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .submit-btn-3d {
+    padding: 1.2rem 2rem;
+    font-size: 1.1rem;
+  }
+  
+  .event-header h2 {
+    font-size: 2rem;
+  }
+}
