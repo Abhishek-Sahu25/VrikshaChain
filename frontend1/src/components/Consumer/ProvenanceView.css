@@ -1,0 +1,515 @@
+.provenance-view {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.provenance-loading, .provenance-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  text-align: center;
+}
+
+.loading-herb {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  animation: float 3s ease-in-out infinite;
+}
+
+.provenance-error h3 {
+  color: #e74c3c;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+.provenance-error p {
+  color: #666;
+}
+
+.provenance-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.provenance-header h1 {
+  font-size: 2.5rem;
+  color: #2E7D32;
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+
+.provenance-header p {
+  font-size: 1.1rem;
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.product-badge {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.badge-text {
+  background: #E8F5E9;
+  color: #2E7D32;
+  padding: 0.8rem 1.5rem;
+  border-radius: 25px;
+  font-weight: bold;
+}
+
+.badge-id {
+  background: #2E7D32;
+  color: white;
+  padding: 0.8rem 1.5rem;
+  border-radius: 25px;
+  font-weight: 500;
+}
+
+.blockchain-badge {
+  background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
+  color: white;
+  padding: 0.8rem 1.5rem;
+  border-radius: 25px;
+  font-weight: 500;
+}
+
+.provenance-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+}
+
+.tab-btn {
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 25px;
+  background: #F1F8E9;
+  color: #2E7D32;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tab-btn:hover {
+  background: #E8F5E9;
+  transform: translateY(-2px);
+}
+
+.tab-btn.active {
+  background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+}
+
+.provenance-content {
+  margin-bottom: 3rem;
+}
+
+.provenance-content h2 {
+  color: #2E7D32;
+  margin-bottom: 2rem;
+  font-size: 1.8rem;
+  text-align: center;
+}
+
+.timeline-3d {
+  position: relative;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.timeline-3d::before {
+  content: '';
+  position: absolute;
+  left: 30px;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(to bottom, #2E7D32, #1B5E20);
+  border-radius: 3px;
+}
+
+.timeline-event-3d {
+  display: flex;
+  margin-bottom: 3rem;
+  position: relative;
+}
+
+.event-marker {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 2rem;
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+}
+
+.marker-icon {
+  color: white;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.event-content-3d {
+  flex: 1;
+  background: white;
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(46, 125, 50, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.event-content-3d:hover {
+  transform: translateY(-5px);
+}
+
+.event-content-3d h3 {
+  color: #2E7D32;
+  margin-bottom: 0.5rem;
+  font-size: 1.3rem;
+}
+
+.event-date {
+  color: #666;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.event-location, .event-description, .event-coordinates,
+.event-farmer, .event-weight, .event-score {
+  color: #666;
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+}
+
+.event-description {
+  margin-bottom: 1rem;
+}
+
+.sustainability-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.metric-card-3d {
+  background: white;
+  padding: 2rem;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 5px 20px rgba(46, 125, 50, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.metric-card-3d:hover {
+  transform: translateY(-5px);
+}
+
+.metric-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: #2E7D32;
+}
+
+.metric-card-3d h3 {
+  color: #2E7D32;
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.metric-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #2E7D32;
+  margin-bottom: 0.5rem;
+}
+
+.metric-label {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.quality-metrics {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.quality-metric-3d {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 3px 15px rgba(46, 125, 50, 0.1);
+}
+
+.metric-name {
+  color: #2E7D32;
+  font-weight: 500;
+  min-width: 150px;
+  text-transform: capitalize;
+}
+
+.metric-bar {
+  flex: 1;
+  height: 20px;
+  background: #E8F5E9;
+  border-radius: 10px;
+  margin: 0 1rem;
+  overflow: hidden;
+}
+
+.metric-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #2E7D32, #1B5E20);
+  border-radius: 10px;
+  transition: width 1s ease;
+}
+
+.metric-value {
+  color: #2E7D32;
+  font-weight: bold;
+  min-width: 60px;
+  text-align: right;
+}
+
+.blockchain-card-3d {
+  background: white;
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(46, 125, 50, 0.1);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.blockchain-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.blockchain-icon {
+  font-size: 2rem;
+}
+
+.blockchain-header h3 {
+  color: #2E7D32;
+  font-size: 1.5rem;
+}
+
+.blockchain-details {
+  margin-bottom: 2rem;
+}
+
+.detail-item {
+  display: flex;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: #F8FBF8;
+  border-radius: 8px;
+}
+
+.detail-label {
+  color: #666;
+  font-weight: 500;
+  min-width: 150px;
+}
+
+.detail-value {
+  color: #2E7D32;
+  font-family: monospace;
+}
+
+.detail-value.verified {
+  color: #27ae60;
+  font-weight: bold;
+}
+
+.view-blockchain-btn {
+  background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 25px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.view-blockchain-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(46, 125, 50, 0.3);
+}
+
+.provenance-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.action-btn {
+  padding: 1rem 2rem;
+  border-radius: 25px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.download-pdf {
+  background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+}
+
+.download-pdf:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+}
+
+.share-provenance {
+  background: transparent;
+  color: #2E7D32;
+  border: 2px solid #2E7D32;
+}
+
+.share-provenance:hover {
+  background: #2E7D32;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.floating-provenance-elements {
+  position: relative;
+  height: 100px;
+}
+
+.provenance-element {
+  position: absolute;
+  font-size: 2rem;
+  opacity: 0.3;
+  animation: float 6s ease-in-out infinite;
+}
+
+.provenance-element:nth-child(1) {
+  top: 0;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.provenance-element:nth-child(2) {
+  top: 30%;
+  right: 15%;
+  animation-delay: 2s;
+}
+
+.provenance-element:nth-child(3) {
+  top: 60%;
+  left: 20%;
+  animation-delay: 4s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(10deg); }
+}
+
+@media (max-width: 968px) {
+  .provenance-tabs {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .tab-btn {
+    width: 200px;
+    justify-content: center;
+  }
+  
+  .timeline-3d::before {
+    left: 25px;
+  }
+  
+  .event-marker {
+    width: 50px;
+    height: 50px;
+    margin-right: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .provenance-view {
+    padding: 1rem;
+  }
+  
+  .provenance-header h1 {
+    font-size: 2rem;
+  }
+  
+  .product-badge {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .timeline-event-3d {
+    flex-direction: column;
+  }
+  
+  .event-marker {
+    margin-right: 0;
+    margin-bottom: 1rem;
+    align-self: flex-start;
+  }
+  
+  .timeline-3d::before {
+    left: 25px;
+  }
+  
+  .quality-metric-3d {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .metric-bar {
+    width: 100%;
+    margin: 0.5rem 0;
+  }
+  
+  .provenance-actions {
+    flex-direction: column;
+  }
+  
+  .detail-item {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .detail-label {
+    min-width: auto;
+  }
+}

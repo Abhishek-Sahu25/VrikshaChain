@@ -1,0 +1,88 @@
+/* Admin layout base (keep your visual theme) */
+.admin-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* admin container splits sidebar + main */
+.admin-container {
+  display: flex;
+  min-height: calc(100vh - 140px); /* adjust based on your header/footer heights */
+}
+
+/* Sidebar fixed so main scrolls */
+.admin-sidebar {
+  width: 280px;
+  position: fixed;
+  top: 80px; /* match your global header height */
+  left: 0;
+  bottom: 0;
+  overflow-y: auto;
+  z-index: 20;
+  background: linear-gradient(180deg, #1b5e20 0%, #2e7d32 100%);
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.admin-sidebar.closed {
+  width: 80px;
+}
+
+/* main area offset so it's not hidden under the fixed sidebar */
+.admin-main {
+  margin-left: 280px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #f8fbf9 0%, #e8f5e9 100%);
+}
+
+/* internal admin header (sticky inside admin-main) */
+.internal-admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 24px;
+  background: rgba(255,255,255,0.95);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+/* compact wallet area */
+.wallet-compact {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  font-size: 14px;
+}
+
+.wallet-connected {
+  padding: 6px 10px;
+  border-radius: 18px;
+  background: rgba(104,196,128,0.12);
+  color: #0b6b2b;
+  font-weight: 600;
+}
+
+.wallet-role .badge {
+  margin-left: 6px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  background: linear-gradient(135deg,#68c480,#4caf50);
+  color: white;
+  font-size: 12px;
+}
+
+.admin-content {
+  padding: 24px;
+  overflow: auto;
+}
+
+/* responsive */
+@media (max-width: 960px) {
+  .admin-sidebar { position: relative; width: 100%; top: 0; height: auto; }
+  .admin-main { margin-left: 0; }
+}

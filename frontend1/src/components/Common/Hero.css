@@ -1,0 +1,295 @@
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f8fbf8 0%, #e8f5e9 100%);
+  padding: 2rem 0;
+}
+
+.hero-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.floating-herbs {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.herb {
+  position: absolute;
+  font-size: 3rem;
+  opacity: 0.3;
+  animation: float 6s ease-in-out infinite;
+}
+
+.herb.ashwagandha {
+  top: 20%;
+  left: 10%;
+  color: #8D6E63;
+  animation-delay: 0s;
+}
+
+.herb.tulsi {
+  top: 60%;
+  right: 15%;
+  color: #689F38;
+  animation-delay: 2s;
+}
+
+.herb.turmeric {
+  bottom: 20%;
+  left: 20%;
+  color: #FFD54F;
+  animation-delay: 4s;
+}
+
+.herb.neem {
+  top: 30%;
+  right: 25%;
+  color: #4CAF50;
+  animation-delay: 1s;
+}
+
+.hero-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+
+.hero-text {
+  max-width: 500px;
+}
+
+.hero-title {
+  font-size: 3rem;
+  font-weight: bold;
+  line-height: 1.2;
+  margin-bottom: 1.5rem;
+  color: #2E7D32;
+}
+
+.title-highlight {
+  color: #1B5E20;
+  display: block;
+}
+
+.hero-description {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  color: #666;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.btn-primary, .btn-secondary {
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: #2E7D32;
+  border: 2px solid #2E7D32;
+}
+
+.btn-secondary:hover {
+  background: #2E7D32;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.hero-visual {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.earth-container {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.earth-sphere {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #8BC34A 0%, #4CAF50 50%, #2E7D32 100%);
+  position: relative;
+  animation: rotate 20s linear infinite;
+  box-shadow: 0 0 50px rgba(76, 175, 80, 0.3);
+}
+
+.earth-texture {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: 
+    radial-gradient(circle at 30% 30%, #689F38 10%, transparent 10.5%),
+    radial-gradient(circle at 70% 20%, #8BC34A 8%, transparent 8.5%),
+    radial-gradient(circle at 40% 70%, #4CAF50 12%, transparent 12.5%),
+    radial-gradient(circle at 80% 60%, #689F38 6%, transparent 6.5%);
+}
+
+.earth-glow {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(76, 175, 80, 0.2) 0%, transparent 70%);
+  animation: pulse 3s ease-in-out infinite;
+}
+
+.orbit-ring {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 2px dashed rgba(76, 175, 80, 0.3);
+  border-radius: 50%;
+  animation: rotate 15s linear infinite reverse;
+}
+
+.floating-orb {
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 2rem;
+  animation: float 4s ease-in-out infinite;
+}
+
+.scan-preview {
+  text-align: center;
+}
+
+.qr-code {
+  width: 120px;
+  height: 120px;
+  background: linear-gradient(45deg, #2E7D32, #1B5E20);
+  margin: 0 auto 1rem;
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.qr-code::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    linear-gradient(90deg, transparent 45%, white 45%, white 55%, transparent 55%),
+    linear-gradient(transparent 45%, white 45%, white 55%, transparent 55%);
+  background-size: 20px 20px;
+}
+
+.scroll-indicator {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.scroll-line {
+  width: 2px;
+  height: 40px;
+  background: #2E7D32;
+  animation: scroll 2s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.05); }
+}
+
+@keyframes scroll {
+  0%, 100% { transform: translateY(0); opacity: 1; }
+  50% { transform: translateY(10px); opacity: 0.5; }
+}
+
+@media (max-width: 968px) {
+  .hero-content {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 3rem;
+  }
+  
+  .hero-title {
+    font-size: 2.5rem;
+  }
+  
+  .hero-buttons {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2rem;
+  }
+  
+  .earth-container {
+    width: 250px;
+    height: 250px;
+  }
+  
+  .earth-sphere {
+    width: 150px;
+    height: 150px;
+  }
+}

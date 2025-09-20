@@ -1,0 +1,84 @@
+// Auto-generated contracts helper (patched by assistant)
+import { ethers } from 'ethers';
+// addresses.json should already be present under src/contracts/addresses.json
+// If it's not, the env vars will be used as fallback.
+// Note: JSON imports are used here for convenience; if your build complains, replace with dynamic fetch or adjust Vite config.
+import addressesJson from '../contracts/addresses.json';
+import BatchTokenArtifact from '../abis/BatchToken.json';
+import AccessRegistryArtifact from '../abis/AccessRegistry.json';
+import AttestationVerifierArtifact from '../abis/AttestationVerifier.json';
+import AggregationManagerArtifact from '../abis/AggregationManager.json';
+
+const env = {
+  ALCHEMY_URL: import.meta.env.VITE_ALCHEMY_SEPOLIA_URL || process.env.REACT_APP_ALCHEMY_SEPOLIA_URL || process.env.VITE_ALCHEMY_SEPOLIA_URL,
+  CHAIN_ID: Number(import.meta.env.VITE_CHAIN_ID || process.env.REACT_APP_CHAIN_ID || 11155111)
+};
+
+const CONTRACT_ADDRESSES = {
+  accessRegistry: addressesJson?.AccessRegistry || import.meta.env.VITE_ACCESS_REGISTRY_ADDRESS || process.env.REACT_APP_ACCESS_REGISTRY_ADDRESS,
+  batchToken: addressesJson?.BatchToken || import.meta.env.VITE_BATCH_TOKEN_ADDRESS || process.env.REACT_APP_BATCH_TOKEN_ADDRESS,
+  attestationVerifier: addressesJson?.AttestationVerifier || import.meta.env.VITE_ATTESTATION_VERIFIER_ADDRESS || process.env.REACT_APP_ATTESTATION_VERIFIER_ADDRESS,
+  aggregationManager: addressesJson?.AggregationManager || import.meta.env.VITE_AGGREGATION_MANAGER_ADDRESS || process.env.REACT_APP_AGGREGATION_MANAGER_ADDRESS
+};
+
+const ABIS = {
+  batchToken: BatchTokenArtifact.abi ?? BatchTokenArtifact,
+  accessRegistry: AccessRegistryArtifact.abi ?? AccessRegistryArtifact,
+  attestationVerifier: AttestationVerifierArtifact.abi ?? AttestationVerifierArtifact,
+  aggregationManager: AggregationManagerArtifact.abi ?? AggregationManagerArtifact
+};
+
+export function getProvider() {
+  if (!env.ALCHEMY_URL) {
+    if (typeof window !== 'undefined' && window.ethereum) {
+      // ethers v6 BrowserProvider
+      return new ethers.BrowserProvider(window.ethereum);
+    }
+    throw new Error('No Alchemy RPC configured. Set VITE_ALCHEMY_SEPOLIA_URL in .env or connect MetaMask.');
+  }
+  return new ethers.JsonRpcProvider(env.ALCHEMY_URL);
+}
+
+export async function getSigner() {
+  if (typeof window === 'undefined' || !window.ethereum) {
+    throw new Error('No wallet provider detected (window.ethereum). Connect MetaMask.');
+  }
+  await window.ethereum.request({ method: 'eth_requestAccounts' });
+  const provider = new ethers.BrowserProvider(window.ethereum);
+  return provider.getSigner();
+}
+
+export function getContract(contractKey, withSigner = false, signerOrProvider = null) {
+  const address = CONTRACT_ADDRESSES[contractKey];
+  const abi = ABIS[contractKey];
+  if (!address) throw new Error(`Contract address for ${contractKey} not found.`);
+  if (!abi) throw new Error(`ABI for ${contractKey} not loaded.`);
+  const provider = signerOrProvider || getProvider();
+  if (withSigner) {
+    if (!signerOrProvider) {
+      throw new Error('withSigner=true requires passing a signer as third argument (e.g., await getSigner()).');
+    }
+    return new ethers.Contract(address, abi, signerOrProvider);
+  } else {
+    return new ethers.Contract(address, abi, provider);
+  }
+}
+
+export function initializeContractsReadOnly() {
+  const provider = getProvider();
+  return {
+    batchToken: new ethers.Contract(CONTRACT_ADDRESSES.batchToken, ABIS.batchToken, provider),
+    accessRegistry: new ethers.Contract(CONTRACT_ADDRESSES.accessRegistry, ABIS.accessRegistry, provider),
+    attestationVerifier: new ethers.Contract(CONTRACT_ADDRESSES.attestationVerifier, ABIS.attestationVerifier, provider),
+    aggregationManager: new ethers.Contract(CONTRACT_ADDRESSES.aggregationManager, ABIS.aggregationManager, provider)
+  };
+}
+
+export default {
+  CONTRACT_ADDRESSES,
+  ABIS,
+  getProvider,
+  getSigner,
+  getContract,
+  initializeContractsReadOnly
+};
