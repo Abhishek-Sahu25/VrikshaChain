@@ -1,49 +1,237 @@
-/* Admin layout base (keep your visual theme) */
+/* Admin layout base */
 .admin-layout {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
-/* admin container splits sidebar + main */
 .admin-container {
   display: flex;
-  min-height: calc(100vh - 140px); /* adjust based on your header/footer heights */
+  min-height: calc(100vh - 140px);
+  position: relative;
 }
 
-/* Sidebar fixed so main scrolls */
+/* Fixed Sidebar Toggle Button */
+.sidebar-toggle-btn {
+  position: fixed;
+  top: 75px; /* Proper spacing from top */
+  left: 5px; /* Proper spacing from left */
+  z-index: 100;
+  background: linear-gradient(135deg, #009688, #00796B);
+  color: rgb(0, 0, 0);
+  border: none;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 150, 136, 0.3);
+  min-width: 50px; /* Proper size */
+  height: 50px; /* Proper size */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-toggle-btn:hover {
+  background: #00796B;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 150, 136, 0.4);
+}
+
+/* Sidebar Overlay */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 998;
+  display: block;
+}
+
+/* Sidebar */
 .admin-sidebar {
   width: 280px;
   position: fixed;
-  top: 80px; /* match your global header height */
-  left: 0;
+  top: 0; /* Changed to top: 0 to cover full height */
+  left: -300px;
   bottom: 0;
   overflow-y: auto;
-  z-index: 20;
+  z-index: 999;
   background: linear-gradient(180deg, #1b5e20 0%, #2e7d32 100%);
   color: white;
-  transition: all 0.3s ease;
+  transition: left 0.3s ease;
+  box-shadow: 2px 0 20px rgba(0, 0, 0, 0.3);
+}
+
+.admin-sidebar.open {
+  left: 0;
 }
 
 .admin-sidebar.closed {
-  width: 80px;
+  left: -300px;
 }
 
-/* main area offset so it's not hidden under the fixed sidebar */
+/* Sidebar Header */
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 100px; /* Added padding to account for fixed header */
+}
+
+.logo-3d {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logo-icon {
+  font-size: 2rem;
+}
+
+.logo-text {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: white;
+}
+
+.sidebar-close {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+.sidebar-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Sidebar Navigation */
+.sidebar-nav {
+  padding: 1rem 0;
+  flex: 1;
+}
+
+.nav-item-3d {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border-left: 4px solid transparent;
+}
+
+.nav-item-3d:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border-left-color: #4caf50;
+}
+
+.nav-item-3d.active {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  border-left-color: #4caf50;
+}
+
+.nav-icon {
+  font-size: 1.3rem;
+  margin-right: 1rem;
+  width: 24px;
+  text-align: center;
+}
+
+.nav-label {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+/* Sidebar Footer */
+.sidebar-footer {
+  padding: 1.5rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  margin-right: 1rem;
+}
+
+.user-details {
+  flex: 1;
+}
+
+.user-name {
+  display: block;
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+}
+
+.user-role {
+  display: block;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.8rem;
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.logout-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Main Content */
 .admin-main {
-  margin-left: 280px;
   flex: 1;
   display: flex;
   flex-direction: column;
   background: linear-gradient(135deg, #f8fbf9 0%, #e8f5e9 100%);
+  width: 100%;
+  margin-left: 0;
 }
 
-/* internal admin header (sticky inside admin-main) */
 .internal-admin-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 18px 24px;
+  padding: 18px 24px 18px 80px; /* Added left padding to avoid button overlap */
   background: rgba(255,255,255,0.95);
   position: sticky;
   top: 0;
@@ -51,7 +239,19 @@
   border-bottom: 1px solid rgba(0,0,0,0.05);
 }
 
-/* compact wallet area */
+.header-left h1 {
+  font-size: 2rem;
+  color: #006064;
+  margin: 0 0 0.5rem 0;
+  font-weight: 700;
+}
+
+.header-left p {
+  color: #546e7a;
+  margin: 0;
+  font-size: 1.1rem;
+}
+
 .wallet-compact {
   display: flex;
   gap: 12px;
@@ -76,13 +276,90 @@
   font-size: 12px;
 }
 
+.btn-connect {
+  background: linear-gradient(135deg, #009688, #00796B);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-connect:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 150, 136, 0.3);
+}
+
 .admin-content {
   padding: 24px;
   overflow: auto;
+  flex: 1;
 }
 
-/* responsive */
-@media (max-width: 960px) {
-  .admin-sidebar { position: relative; width: 100%; top: 0; height: auto; }
-  .admin-main { margin-left: 0; }
+/* Responsive Design */
+@media (min-width: 1024px) {
+  .admin-sidebar {
+    left: -300px;
+  }
+  
+  .admin-sidebar.open {
+    left: 0;
+  }
+  
+  .sidebar-overlay {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar-toggle-btn {
+    top: 80px;
+    left: 15px;
+    padding: 10px 12px;
+    min-width: 45px;
+    height: 45px;
+    font-size: 1.2rem;
+  }
+  
+  .internal-admin-header {
+    padding: 15px 20px 15px 70px; /* Adjusted for mobile */
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  
+  .header-right {
+    width: 100%;
+  }
+  
+  .wallet-compact {
+    justify-content: space-between;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-sidebar {
+    width: 100%;
+    left: -100%;
+  }
+  
+  .admin-sidebar.open {
+    left: 0;
+  }
+  
+  .sidebar-toggle-btn {
+    top: 75px;
+    left: 10px;
+    padding: 8px 10px;
+    min-width: 40px;
+    height: 40px;
+    font-size: 1.1rem;
+  }
+  
+  .internal-admin-header {
+    padding: 12px 15px 12px 60px; /* Further adjusted for small screens */
+  }
 }
