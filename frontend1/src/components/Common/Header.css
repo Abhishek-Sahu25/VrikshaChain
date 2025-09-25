@@ -30,7 +30,7 @@
 
 .logo-leaf {
   font-size: 2rem;
-  animation: float 3s ease-in-out infinite;
+  /* Removed the floating animation */
 }
 
 .logo h1 {
@@ -115,10 +115,7 @@
   transition: 0.3s;
 }
 
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-5px); }
-}
+/* Removed the float animation keyframes since it's no longer used */
 
 @media (max-width: 768px) {
   .nav {
