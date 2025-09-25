@@ -34,7 +34,6 @@ const CollectionEvent = () => {
     setIsSubmitting(true);
 
     try {
-      // Prepare batch data for blockchain
       const batchData = {
         to: account,
         species: formData.species,
@@ -47,28 +46,7 @@ const CollectionEvent = () => {
         }
       };
 
-      // For EIP-712 signing (simplified version)
-      const domain = {
-        name: 'VrikshaChain Batch',
-        version: '1',
-        chainId: 1, // Mainnet - should be dynamic
-        verifyingContract: '0x...' // Your contract address
-      };
-
-      const types = {
-        Batch: [
-          { name: 'to', type: 'address' },
-          { name: 'species', type: 'string' },
-          { name: 'weight', type: 'uint256' },
-          { name: 'location', type: 'string' },
-          { name: 'timestamp', type: 'uint256' }
-        ]
-      };
-
-      // Sign the message (simplified - in real app, use proper EIP-712 signing)
       const signature = await signer.signMessage(JSON.stringify(batchData));
-
-      // Create batch on blockchain
       const result = await createBatch({
         ...batchData,
         signature,
@@ -82,7 +60,6 @@ const CollectionEvent = () => {
           message: 'Your herb collection has been recorded on the blockchain'
         });
         
-        // Reset form
         setFormData({
           species: '',
           weight: '',
@@ -149,173 +126,178 @@ const CollectionEvent = () => {
         )}
       </div>
 
-      <form onSubmit={handleSubmit} className="collection-form-3d">
-        <div className="form-grid">
-          <div className="form-group-3d">
-            <label htmlFor="species">Herb Species</label>
-            <select
-              id="species"
-              name="species"
-              value={formData.species}
-              onChange={handleChange}
-              required
-              disabled={isSubmitting}
-            >
-              <option value="">Select Herb</option>
-              <option value="ashwagandha">Ashwagandha</option>
-              <option value="tulsi">Tulsi</option>
-              <option value="turmeric">Turmeric</option>
-              <option value="neem">Neem</option>
-              <option value="amla">Amla</option>
-              <option value="brahmi">Brahmi</option>
-            </select>
+      <div className="form-layout">
+        <form onSubmit={handleSubmit} className="collection-form">
+          <div className="form-section">
+            <h3>Collection Details</h3>
+            <div className="form-grid">
+              <div className="form-group">
+                <label htmlFor="species">Herb Species *</label>
+                <select
+                  id="species"
+                  name="species"
+                  value={formData.species}
+                  onChange={handleChange}
+                  required
+                  disabled={isSubmitting}
+                >
+                  <option value="">Select Herb</option>
+                  <option value="ashwagandha">Ashwagandha</option>
+                  <option value="tulsi">Tulsi</option>
+                  <option value="turmeric">Turmeric</option>
+                  <option value="neem">Neem</option>
+                  <option value="amla">Amla</option>
+                  <option value="brahmi">Brahmi</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="weight">Weight (kg) *</label>
+                <input
+                  type="number"
+                  id="weight"
+                  name="weight"
+                  value={formData.weight}
+                  onChange={handleChange}
+                  required
+                  min="0"
+                  step="0.1"
+                  placeholder="0.0"
+                  disabled={isSubmitting}
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="harvestDate">Harvest Date *</label>
+                <input
+                  type="date"
+                  id="harvestDate"
+                  name="harvestDate"
+                  value={formData.harvestDate}
+                  onChange={handleChange}
+                  required
+                  disabled={isSubmitting}
+                />
+              </div>
+
+              <div className="form-group location-group">
+                <label htmlFor="location">GPS Location *</label>
+                <div className="location-inputs">
+                  <input
+                    type="text"
+                    id="location"
+                    name="location"
+                    value={formData.location}
+                    onChange={handleChange}
+                    required
+                    placeholder="12.9716° N, 77.5946° E"
+                    disabled={isSubmitting}
+                  />
+                  <button 
+                    type="button" 
+                    className="gps-btn"
+                    onClick={getCurrentLocation}
+                    disabled={isSubmitting}
+                  >
+                    📍 Get Location
+                  </button>
+                </div>
+                <div className="coordinates">
+                  <input
+                    type="number"
+                    step="any"
+                    placeholder="Latitude"
+                    value={formData.geoLat}
+                    onChange={(e) => setFormData({...formData, geoLat: e.target.value})}
+                    disabled={isSubmitting}
+                  />
+                  <input
+                    type="number"
+                    step="any"
+                    placeholder="Longitude"
+                    value={formData.geoLong}
+                    onChange={(e) => setFormData({...formData, geoLong: e.target.value})}
+                    disabled={isSubmitting}
+                  />
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div className="form-group-3d">
-            <label htmlFor="weight">Weight (kg)</label>
-            <input
-              type="number"
-              id="weight"
-              name="weight"
-              value={formData.weight}
-              onChange={handleChange}
-              required
-              min="0"
-              step="0.1"
-              disabled={isSubmitting}
-            />
+          <div className="form-section">
+            <h3>Quality Notes</h3>
+            <div className="form-group">
+              <label htmlFor="qualityNotes">Additional Information</label>
+              <textarea
+                id="qualityNotes"
+                name="qualityNotes"
+                rows="4"
+                value={formData.qualityNotes}
+                onChange={handleChange}
+                placeholder="Describe the herb quality, appearance, and any special notes..."
+                disabled={isSubmitting}
+              ></textarea>
+            </div>
           </div>
 
-          <div className="form-group-3d">
-            <label htmlFor="location">GPS Location</label>
-            <input
-              type="text"
-              id="location"
-              name="location"
-              value={formData.location}
-              onChange={handleChange}
-              required
-              placeholder="12.9716° N, 77.5946° E"
-              disabled={isSubmitting}
-            />
+          <div className="form-actions">
             <button 
-              type="button" 
-              className="gps-btn"
-              onClick={getCurrentLocation}
-              disabled={isSubmitting}
+              type="submit" 
+              className="submit-btn"
+              disabled={!account || isSubmitting}
             >
-              📍 Get Current Location
+              {isSubmitting ? '⏳ Recording...' : '🌿 Record Collection on Blockchain'}
             </button>
-            <div className="geo-coordinates">
-              <input
-                type="number"
-                step="any"
-                placeholder="Latitude"
-                value={formData.geoLat}
-                onChange={(e) => setFormData({...formData, geoLat: e.target.value})}
-                disabled={isSubmitting}
-              />
-              <input
-                type="number"
-                step="any"
-                placeholder="Longitude"
-                value={formData.geoLong}
-                onChange={(e) => setFormData({...formData, geoLong: e.target.value})}
-                disabled={isSubmitting}
-              />
-            </div>
           </div>
+        </form>
 
-          <div className="form-group-3d">
-            <label htmlFor="harvestDate">Harvest Date</label>
-            <input
-              type="date"
-              id="harvestDate"
-              name="harvestDate"
-              value={formData.harvestDate}
-              onChange={handleChange}
-              required
-              disabled={isSubmitting}
-            />
+        <div className="preview-panel">
+          <div className="preview-header">
+            <h3>Preview</h3>
           </div>
-        </div>
-
-        <div className="form-group-3d">
-          <label htmlFor="qualityNotes">Quality Notes</label>
-          <textarea
-            id="qualityNotes"
-            name="qualityNotes"
-            rows="4"
-            value={formData.qualityNotes}
-            onChange={handleChange}
-            placeholder="Describe the herb quality, appearance, and any special notes..."
-            disabled={isSubmitting}
-          ></textarea>
-        </div>
-
-        <div className="form-actions">
-          <button 
-            type="submit" 
-            className="submit-btn-3d"
-            disabled={!account || isSubmitting}
-          >
-            {isSubmitting ? '⏳ Recording...' : '🌿 Record Collection on Blockchain'}
-          </button>
-        </div>
-      </form>
-
-      <div className="collection-preview">
-        <h3>Collection Preview</h3>
-        <div className="preview-card-3d">
-          <div className="preview-content">
+          <div className="preview-card">
             <div className="preview-item">
-              <span className="preview-label">Species:</span>
-              <span className="preview-value">{formData.species || 'Not specified'}</span>
+              <span>Species:</span>
+              <strong>{formData.species || 'Not specified'}</strong>
             </div>
             <div className="preview-item">
-              <span className="preview-label">Weight:</span>
-              <span className="preview-value">{formData.weight || '0'} kg</span>
+              <span>Weight:</span>
+              <strong>{formData.weight || '0'} kg</strong>
             </div>
             <div className="preview-item">
-              <span className="preview-label">Location:</span>
-              <span className="preview-value">{formData.location || 'Not specified'}</span>
+              <span>Location:</span>
+              <strong>{formData.location || 'Not specified'}</strong>
             </div>
             <div className="preview-item">
-              <span className="preview-label">Harvest Date:</span>
-              <span className="preview-value">{formData.harvestDate || 'Not specified'}</span>
+              <span>Harvest Date:</span>
+              <strong>{formData.harvestDate || 'Not specified'}</strong>
             </div>
             {formData.qualityNotes && (
               <div className="preview-item">
-                <span className="preview-label">Quality Notes:</span>
-                <span className="preview-value">{formData.qualityNotes}</span>
+                <span>Quality Notes:</span>
+                <div className="notes-preview">{formData.qualityNotes}</div>
               </div>
             )}
           </div>
-        </div>
-      </div>
 
-      <div className="blockchain-info">
-        <h4>Blockchain Information</h4>
-        <div className="info-grid">
-          <div className="info-item">
-            <span className="info-label">Wallet Address:</span>
-            <span className="info-value">{account || 'Not connected'}</span>
-          </div>
-          <div className="info-item">
-            <span className="info-label">Network:</span>
-            <span className="info-value">Ethereum Mainnet</span>
-          </div>
-          <div className="info-item">
-            <span className="info-label">Transaction Fee:</span>
-            <span className="info-value">~$2-5 (estimated)</span>
+          <div className="blockchain-info">
+            <h4>Blockchain Status</h4>
+            <div className="info-item">
+              <span>Wallet:</span>
+              <span className={account ? 'status-connected' : 'status-disconnected'}>
+                {account ? 'Connected' : 'Not Connected'}
+              </span>
+            </div>
+            <div className="info-item">
+              <span>Network:</span>
+              <span>Ethereum Mainnet</span>
+            </div>
+            <div className="info-item">
+              <span>Gas Fee:</span>
+              <span>~$2-5</span>
+            </div>
           </div>
         </div>
-      </div>
-
-      <div className="floating-herbs">
-        <div className="herb-float">🌿</div>
-        <div className="herb-float">🌿</div>
-        <div className="herb-float">🌿</div>
       </div>
     </div>
   );
