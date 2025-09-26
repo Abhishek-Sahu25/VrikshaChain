@@ -17,7 +17,7 @@ const ConsumerLayout = ({ children }) => {
       <Footer />
 
       {/* Quick Action Buttons */}
-      <div className="quick-action-buttons">
+      {/* <div className="quick-action-buttons">
         <button className="quick-action scan-quick">
           <span className="action-icon">📷</span>
           <span className="action-text">Scan QR</span>
@@ -26,7 +26,7 @@ const ConsumerLayout = ({ children }) => {
           <span className="action-icon">🔍</span>
           <span className="action-text">Track</span>
         </button>
-      </div>
+      </div> */}
 
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (

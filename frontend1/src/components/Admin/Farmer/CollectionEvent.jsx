@@ -14,6 +14,7 @@ const CollectionEvent = () => {
     geoLat: '',
     geoLong: ''
   });
+  const [isLocationAutoFilled, setIsLocationAutoFilled] = useState(false);
   const { account, signer } = useWeb3();
   const { createBatch } = useBlockchain();
   const { showNotification } = useApp();
@@ -69,6 +70,7 @@ const CollectionEvent = () => {
           geoLat: '',
           geoLong: ''
         });
+        setIsLocationAutoFilled(false);
       } else {
         throw new Error(result.error);
       }
@@ -85,6 +87,10 @@ const CollectionEvent = () => {
   };
 
   const handleChange = (e) => {
+    // Only allow changes to fields that are not location-related when auto-filled
+    if (isLocationAutoFilled && ['location', 'geoLat', 'geoLong'].includes(e.target.name)) {
+      return; // Prevent changes to location fields when auto-filled
+    }
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
@@ -101,13 +107,14 @@ const CollectionEvent = () => {
             geoLong: position.coords.longitude.toFixed(6),
             location: `${position.coords.latitude.toFixed(6)}° N, ${position.coords.longitude.toFixed(6)}° E`
           });
+          setIsLocationAutoFilled(true);
         },
         (error) => {
           console.error('Error getting location:', error);
           showNotification({
             type: 'error',
             title: 'Location Error',
-            message: 'Could not retrieve your location. Please enter manually.'
+            message: 'Could not retrieve your location. Please try again.'
           });
         }
       );
@@ -190,14 +197,16 @@ const CollectionEvent = () => {
                     value={formData.location}
                     onChange={handleChange}
                     required
-                    placeholder="12.9716° N, 77.5946° E"
-                    disabled={isSubmitting}
+                    placeholder="Click 'Get Location' to auto-detect"
+                    disabled={true} // Always disabled - can only be set by Get Location button
+                    readOnly={true}
+                    className={isLocationAutoFilled ? 'location-auto-filled' : ''}
                   />
                   <button 
                     type="button" 
                     className="gps-btn"
                     onClick={getCurrentLocation}
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || isLocationAutoFilled}
                   >
                     📍 Get Location
                   </button>
@@ -206,20 +215,34 @@ const CollectionEvent = () => {
                   <input
                     type="number"
                     step="any"
-                    placeholder="Latitude"
+                    placeholder="Latitude (auto-detected)"
                     value={formData.geoLat}
-                    onChange={(e) => setFormData({...formData, geoLat: e.target.value})}
-                    disabled={isSubmitting}
+                    onChange={handleChange}
+                    disabled={true} // Always disabled - can only be set by Get Location button
+                    readOnly={true}
+                    className={isLocationAutoFilled ? 'location-auto-filled' : ''}
                   />
                   <input
                     type="number"
                     step="any"
-                    placeholder="Longitude"
+                    placeholder="Longitude (auto-detected)"
                     value={formData.geoLong}
-                    onChange={(e) => setFormData({...formData, geoLong: e.target.value})}
-                    disabled={isSubmitting}
+                    onChange={handleChange}
+                    disabled={true} // Always disabled - can only be set by Get Location button
+                    readOnly={true}
+                    className={isLocationAutoFilled ? 'location-auto-filled' : ''}
                   />
                 </div>
+                {isLocationAutoFilled && (
+                  <div className="location-note">
+                    <small>✅ Location successfully auto-detected and locked</small>
+                  </div>
+                )}
+                {!isLocationAutoFilled && (
+                  <div className="location-note">
+                    <small>📍 Location is required. Click "Get Location" to auto-detect your current position.</small>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -244,10 +267,15 @@ const CollectionEvent = () => {
             <button 
               type="submit" 
               className="submit-btn"
-              disabled={!account || isSubmitting}
+              disabled={!account || isSubmitting || !isLocationAutoFilled} // Also disable if location not set
             >
               {isSubmitting ? '⏳ Recording...' : '🌿 Record Collection on Blockchain'}
             </button>
+            {!isLocationAutoFilled && (
+              <div className="location-required-warning">
+                ⚠️ Please get your location first before submitting
+              </div>
+            )}
           </div>
         </form>
 

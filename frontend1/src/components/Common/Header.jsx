@@ -39,9 +39,7 @@ const Header = () => {
                 Logout ({userRole})
               </button>
             </>
-          ) : (
-            <a href="/login" className="nav-link">Login</a>
-          )}
+          ) : null}
         </nav>
         
         <div className="wallet-section">
