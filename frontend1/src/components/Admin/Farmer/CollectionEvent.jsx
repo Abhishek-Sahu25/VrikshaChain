@@ -1,136 +1,288 @@
-import React, { useState } from 'react';
-import { useWeb3 } from '../../../contexts/Web3Context';
-import { useBlockchain } from '../../../hooks';
-import { useApp } from '../../../contexts/AppContext';
+// src/components/CollectionEventWithPinata.jsx
+import React, { useState, useRef } from "react";
 import './CollectionEvent.css';
 
-const CollectionEvent = () => {
-  const [formData, setFormData] = useState({
-    species: '',
-    weight: '',
-    location: '',
-    harvestDate: '',
-    qualityNotes: '',
-    geoLat: '',
-    geoLong: ''
-  });
-  const [isLocationAutoFilled, setIsLocationAutoFilled] = useState(false);
-  const { account, signer } = useWeb3();
-  const { createBatch } = useBlockchain();
-  const { showNotification } = useApp();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+// Pull Pinata JWT from env
+const PINATA_JWT =
+  (typeof import.meta !== "undefined" && import.meta.env && import.meta.env.VITE_PINATA_JWT) ||
+  process.env.REACT_APP_PINATA_JWT ||
+  "<PUT_YOUR_JWT_HERE>";
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    if (!account || !signer) {
-      showNotification({
-        type: 'error',
-        title: 'Wallet Not Connected',
-        message: 'Please connect your wallet to create a collection'
-      });
+// --- helper: upload file to Pinata ---
+function uploadFileToPinata(file, jwt, { metadata = {}, wrapWithDirectory = false } = {}, onProgress) {
+  return new Promise((resolve, reject) => {
+    if (!jwt || jwt.startsWith("<PUT_YOUR_JWT")) {
+      reject(new Error("Pinata JWT not set. Set VITE_PINATA_JWT or REACT_APP_PINATA_JWT."));
       return;
     }
 
-    setIsSubmitting(true);
+    const url = "https://api.pinata.cloud/pinning/pinFileToIPFS";
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", url);
+    xhr.setRequestHeader("Authorization", `Bearer ${jwt}`);
 
-    try {
-      const batchData = {
-        to: account,
-        species: formData.species,
-        weight: formData.weight,
-        location: formData.location,
-        timestamp: Math.floor(new Date(formData.harvestDate).getTime() / 1000),
-        metadata: {
-          qualityNotes: formData.qualityNotes,
-          geoLocation: `${formData.geoLat}, ${formData.geoLong}`
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        try {
+          const json = JSON.parse(xhr.responseText);
+          resolve(json);
+        } catch (e) {
+          resolve({ raw: xhr.responseText });
+        }
+      } else {
+        reject(new Error(`Pinata error ${xhr.status}: ${xhr.responseText}`));
+      }
+    };
+
+    xhr.onerror = () => reject(new Error("Network error while contacting Pinata"));
+
+    if (xhr.upload && onProgress) {
+      xhr.upload.onprogress = (ev) => {
+        if (ev.lengthComputable) {
+          onProgress(Math.round((ev.loaded / ev.total) * 100));
         }
       };
-
-      const signature = await signer.signMessage(JSON.stringify(batchData));
-      const result = await createBatch({
-        ...batchData,
-        signature,
-        nonce: Date.now()
-      });
-
-      if (result.success) {
-        showNotification({
-          type: 'success',
-          title: 'Collection Created',
-          message: 'Your herb collection has been recorded on the blockchain'
-        });
-        
-        setFormData({
-          species: '',
-          weight: '',
-          location: '',
-          harvestDate: '',
-          qualityNotes: '',
-          geoLat: '',
-          geoLong: ''
-        });
-        setIsLocationAutoFilled(false);
-      } else {
-        throw new Error(result.error);
-      }
-    } catch (error) {
-      console.error('Error creating collection:', error);
-      showNotification({
-        type: 'error',
-        title: 'Creation Failed',
-        message: error.message || 'Failed to create collection on blockchain'
-      });
-    } finally {
-      setIsSubmitting(false);
     }
+
+    const formData = new FormData();
+    formData.append("file", file, file.name);
+
+    const pinataMetadata = {
+      name: metadata.name || file.name,
+      keyvalues: metadata.keyvalues || {}
+    };
+    formData.append("pinataMetadata", JSON.stringify(pinataMetadata));
+
+    formData.append("pinataOptions", JSON.stringify({ cidVersion: 1, wrapWithDirectory }));
+    xhr.send(formData);
+  });
+}
+
+// --- helper: pin JSON to Pinata ---
+async function pinJSONToPinata(jsonObj, jwt, name = "collection-metadata") {
+  const url = "https://api.pinata.cloud/pinning/pinJSONToIPFS";
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${jwt}`
+    },
+    body: JSON.stringify({ pinataMetadata: { name }, pinataContent: jsonObj })
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error("Pinata JSON pin error: " + text);
+  }
+  return res.json();
+}
+
+export default function CollectionEventWithPinata() {
+  // form fields
+  const [farmerName, setFarmerName] = useState("");
+  const [species, setSpecies] = useState("");
+  const [weight, setWeight] = useState("");
+  const [harvestDate, setHarvestDate] = useState("");
+  const [latitude, setLatitude] = useState("");
+  const [longitude, setLongitude] = useState("");
+  const [qualityNotes, setQualityNotes] = useState("");
+  const [isLocationAutoFilled, setIsLocationAutoFilled] = useState(false);
+
+  // files
+  const [files, setFiles] = useState([]);
+  const [wrapAsDirectory, setWrapAsDirectory] = useState(false);
+
+  // UI state
+  const [progresses, setProgresses] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [results, setResults] = useState(null);
+  const fileInputRef = useRef();
+
+  const handleFilesChange = (e) => {
+    setFiles(Array.from(e.target.files || []));
   };
 
-  const handleChange = (e) => {
-    // Only allow changes to fields that are not location-related when auto-filled
-    if (isLocationAutoFilled && ['location', 'geoLat', 'geoLong'].includes(e.target.name)) {
-      return; // Prevent changes to location fields when auto-filled
-    }
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+  const resetForm = () => {
+    setFarmerName("");
+    setSpecies("");
+    setWeight("");
+    setHarvestDate("");
+    setLatitude("");
+    setLongitude("");
+    setQualityNotes("");
+    setIsLocationAutoFilled(false);
+    setFiles([]);
+    setWrapAsDirectory(false);
+    setProgresses({});
+    setResults(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const getCurrentLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          setFormData({
-            ...formData,
-            geoLat: position.coords.latitude.toFixed(6),
-            geoLong: position.coords.longitude.toFixed(6),
-            location: `${position.coords.latitude.toFixed(6)}° N, ${position.coords.longitude.toFixed(6)}° E`
-          });
+          const lat = position.coords.latitude.toFixed(6);
+          const lng = position.coords.longitude.toFixed(6);
+          setLatitude(lat);
+          setLongitude(lng);
           setIsLocationAutoFilled(true);
         },
         (error) => {
           console.error('Error getting location:', error);
-          showNotification({
-            type: 'error',
-            title: 'Location Error',
-            message: 'Could not retrieve your location. Please try again.'
-          });
+          alert('Could not retrieve your location. Please try again.');
         }
       );
+    } else {
+      alert('Geolocation is not supported by this browser.');
     }
   };
+
+  const handleLocationChange = (e) => {
+    // Prevent manual changes to location fields
+    e.preventDefault();
+    return false;
+  };
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    
+    // Basic validation
+    if (!farmerName || !species || !weight || !harvestDate) {
+      alert('Please fill in all required fields');
+      return;
+    }
+
+    if (!isLocationAutoFilled) {
+      alert('Please get your location first before submitting');
+      return;
+    }
+
+    if (!files.length) {
+      if (!window.confirm("No files selected. Continue and only store metadata?")) {
+        return;
+      }
+    }
+
+    setIsSubmitting(true);
+    setResults(null);
+    setProgresses({});
+
+    try {
+      const jwt = PINATA_JWT;
+      const uploadedFiles = [];
+
+      if (wrapAsDirectory && files.length > 1) {
+        // Upload directory
+        const formData = new FormData();
+        files.forEach((f) => formData.append("file", f, f.name));
+        formData.append(
+          "pinataMetadata",
+          JSON.stringify({ name: `collection-${farmerName || "unnamed"}`, keyvalues: { farmerName } })
+        );
+        formData.append("pinataOptions", JSON.stringify({ cidVersion: 1, wrapWithDirectory: true }));
+
+        await new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.open("POST", "https://api.pinata.cloud/pinning/pinFileToIPFS");
+          xhr.setRequestHeader("Authorization", `Bearer ${jwt}`);
+
+          xhr.upload.onprogress = (ev) => {
+            if (ev.lengthComputable) {
+              const percent = Math.round((ev.loaded / ev.total) * 100);
+              setProgresses((p) => ({ ...p, __dir__: percent }));
+            }
+          };
+
+          xhr.onload = () => {
+            if (xhr.status >= 200 && xhr.status < 300) {
+              try {
+                const json = JSON.parse(xhr.responseText);
+                uploadedFiles.push({ name: "directory", ipfsResult: json });
+                resolve();
+              } catch (err) {
+                uploadedFiles.push({ name: "directory", ipfsResult: { raw: xhr.responseText } });
+                resolve();
+              }
+            } else {
+              reject(new Error(`Pinata error ${xhr.status}: ${xhr.responseText}`));
+            }
+          };
+          xhr.onerror = () => reject(new Error("Network error while contacting Pinata"));
+          xhr.send(formData);
+        });
+      } else {
+        // Upload files individually
+        for (const file of files) {
+          setProgresses((p) => ({ ...p, [file.name]: 0 }));
+          const pinMetadata = { name: file.name, keyvalues: { farmerName } };
+
+          const res = await uploadFileToPinata(
+            file,
+            jwt,
+            { metadata: pinMetadata, wrapWithDirectory: false },
+            (percent) => setProgresses((p) => ({ ...p, [file.name]: percent }))
+          );
+
+          uploadedFiles.push({ name: file.name, ipfsResult: res });
+        }
+      }
+
+      // Build metadata JSON
+      const fileEntries = uploadedFiles.map((u) => {
+        const ipfs = u.ipfsResult || {};
+        return {
+          originalFileName: u.name,
+          pinnedName: ipfs.Name || ipfs.name || u.name,
+          ipfsHash: ipfs.IpfsHash || null,
+          rawResult: ipfs
+        };
+      });
+
+      const record = {
+        recordType: "collectionEvent",
+        farmerName,
+        species,
+        weight,
+        harvestDate,
+        location: { latitude, longitude },
+        qualityNotes,
+        uploaderAddress: (window && window.ethereum && window.ethereum.selectedAddress) || null,
+        files: fileEntries,
+        createdAt: new Date().toISOString()
+      };
+
+      // Pin JSON record
+      const metaPinName = `collection-metadata-${farmerName || "unknown"}-${Date.now()}`;
+      const metaRes = await pinJSONToPinata(record, jwt, metaPinName);
+
+      const metadataCid = metaRes.IpfsHash;
+      const metadataGateway = `https://gateway.pinata.cloud/ipfs/${metadataCid}`;
+
+      const finalResult = {
+        files: uploadedFiles,
+        metadataCid,
+        metadataGateway,
+        pinnedMetadataRaw: metaRes
+      };
+
+      setResults(finalResult);
+
+      // Show success message
+      alert(`Success! Metadata CID: ${metadataCid}`);
+      
+    } catch (err) {
+      console.error("Upload error:", err);
+      alert("Upload failed: " + (err.message || err));
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
 
   return (
     <div className="collection-event">
       <div className="event-header">
-        <h2>Record New Collection</h2>
-        <p>Document your herb harvest with geo-tagging and quality details</p>
-        {!account && (
-          <div className="wallet-warning">
-            ⚠️ Please connect your wallet to record collections on blockchain
-          </div>
-        )}
+        <h2>Collection Event</h2>
+        <p>Document your herb harvest with geo-tagging, file attachments, and IPFS storage</p>
       </div>
 
       <div className="form-layout">
@@ -139,16 +291,28 @@ const CollectionEvent = () => {
             <h3>Collection Details</h3>
             <div className="form-grid">
               <div className="form-group">
-                <label htmlFor="species">Herb Species *</label>
+                <label htmlFor="farmerName">Farmer Name *</label>
+                <input
+                  id="farmerName"
+                  type="text"
+                  value={farmerName}
+                  onChange={(e) => setFarmerName(e.target.value)}
+                  required
+                  disabled={isSubmitting}
+                  placeholder="Enter farmer's name"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="species">Species / Crop *</label>
                 <select
                   id="species"
-                  name="species"
-                  value={formData.species}
-                  onChange={handleChange}
+                  value={species}
+                  onChange={(e) => setSpecies(e.target.value)}
                   required
                   disabled={isSubmitting}
                 >
-                  <option value="">Select Herb</option>
+                  <option value="">Select Species</option>
                   <option value="ashwagandha">Ashwagandha</option>
                   <option value="tulsi">Tulsi</option>
                   <option value="turmeric">Turmeric</option>
@@ -161,11 +325,10 @@ const CollectionEvent = () => {
               <div className="form-group">
                 <label htmlFor="weight">Weight (kg) *</label>
                 <input
-                  type="number"
                   id="weight"
-                  name="weight"
-                  value={formData.weight}
-                  onChange={handleChange}
+                  type="number"
+                  value={weight}
+                  onChange={(e) => setWeight(e.target.value)}
                   required
                   min="0"
                   step="0.1"
@@ -177,11 +340,10 @@ const CollectionEvent = () => {
               <div className="form-group">
                 <label htmlFor="harvestDate">Harvest Date *</label>
                 <input
-                  type="date"
                   id="harvestDate"
-                  name="harvestDate"
-                  value={formData.harvestDate}
-                  onChange={handleChange}
+                  type="date"
+                  value={harvestDate}
+                  onChange={(e) => setHarvestDate(e.target.value)}
                   required
                   disabled={isSubmitting}
                 />
@@ -190,18 +352,28 @@ const CollectionEvent = () => {
               <div className="form-group location-group">
                 <label htmlFor="location">GPS Location *</label>
                 <div className="location-inputs">
-                  <input
-                    type="text"
-                    id="location"
-                    name="location"
-                    value={formData.location}
-                    onChange={handleChange}
-                    required
-                    placeholder="Click 'Get Location' to auto-detect"
-                    disabled={true} // Always disabled - can only be set by Get Location button
-                    readOnly={true}
-                    className={isLocationAutoFilled ? 'location-auto-filled' : ''}
-                  />
+                  <div style={{ flex: 1, display: 'flex', gap: '1rem' }}>
+                    <input
+                      type="text"
+                      placeholder="Latitude (auto-detected)"
+                      value={latitude}
+                      onChange={handleLocationChange}
+                      onKeyDown={handleLocationChange}
+                      disabled={true}
+                      readOnly={true}
+                      className={isLocationAutoFilled ? 'location-auto-filled' : ''}
+                    />
+                    <input
+                      type="text"
+                      placeholder="Longitude (auto-detected)"
+                      value={longitude}
+                      onChange={handleLocationChange}
+                      onKeyDown={handleLocationChange}
+                      disabled={true}
+                      readOnly={true}
+                      className={isLocationAutoFilled ? 'location-auto-filled' : ''}
+                    />
+                  </div>
                   <button 
                     type="button" 
                     className="gps-btn"
@@ -211,34 +383,11 @@ const CollectionEvent = () => {
                     📍 Get Location
                   </button>
                 </div>
-                <div className="coordinates">
-                  <input
-                    type="number"
-                    step="any"
-                    placeholder="Latitude (auto-detected)"
-                    value={formData.geoLat}
-                    onChange={handleChange}
-                    disabled={true} // Always disabled - can only be set by Get Location button
-                    readOnly={true}
-                    className={isLocationAutoFilled ? 'location-auto-filled' : ''}
-                  />
-                  <input
-                    type="number"
-                    step="any"
-                    placeholder="Longitude (auto-detected)"
-                    value={formData.geoLong}
-                    onChange={handleChange}
-                    disabled={true} // Always disabled - can only be set by Get Location button
-                    readOnly={true}
-                    className={isLocationAutoFilled ? 'location-auto-filled' : ''}
-                  />
-                </div>
-                {isLocationAutoFilled && (
+                {isLocationAutoFilled ? (
                   <div className="location-note">
                     <small>✅ Location successfully auto-detected and locked</small>
                   </div>
-                )}
-                {!isLocationAutoFilled && (
+                ) : (
                   <div className="location-note">
                     <small>📍 Location is required. Click "Get Location" to auto-detect your current position.</small>
                   </div>
@@ -248,28 +397,96 @@ const CollectionEvent = () => {
           </div>
 
           <div className="form-section">
+            <h3>File Attachments</h3>
+            <div className="form-group">
+              <label htmlFor="files">Attach Images / Reports</label>
+              <input 
+                ref={fileInputRef} 
+                type="file" 
+                multiple 
+                onChange={handleFilesChange}
+                disabled={isSubmitting}
+                id="files"
+              />
+              <small>Upload images, documents, or reports related to this collection</small>
+            </div>
+            
+            <div className="form-group checkbox-group">
+              <label>
+                <input 
+                  type="checkbox" 
+                  checked={wrapAsDirectory} 
+                  onChange={(e) => setWrapAsDirectory(e.target.checked)}
+                  disabled={isSubmitting}
+                />
+                Upload as directory (wrapWithDirectory) - Recommended for multiple files
+              </label>
+            </div>
+
+            {files.length > 0 && (
+              <div className="files-preview">
+                <h4>Selected Files ({files.length})</h4>
+                <ul>
+                  {files.map((file, index) => (
+                    <li key={index}>{file.name} ({(file.size / 1024).toFixed(2)} KB)</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+
+          <div className="form-section">
             <h3>Quality Notes</h3>
             <div className="form-group">
               <label htmlFor="qualityNotes">Additional Information</label>
               <textarea
                 id="qualityNotes"
-                name="qualityNotes"
                 rows="4"
-                value={formData.qualityNotes}
-                onChange={handleChange}
+                value={qualityNotes}
+                onChange={(e) => setQualityNotes(e.target.value)}
                 placeholder="Describe the herb quality, appearance, and any special notes..."
                 disabled={isSubmitting}
               ></textarea>
             </div>
           </div>
 
+          {Object.keys(progresses).length > 0 && (
+            <div className="form-section">
+              <h3>Upload Progress</h3>
+              <div className="upload-progress">
+                {Object.entries(progresses).map(([fileName, progress]) => (
+                  <div key={fileName} className="progress-item">
+                    <div className="progress-info">
+                      <span>{fileName === '__dir__' ? 'Directory' : fileName}</span>
+                      <span>{progress}%</span>
+                    </div>
+                    <div className="progress-bar">
+                      <div 
+                        className="progress-fill" 
+                        style={{ width: `${progress}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="form-actions">
             <button 
               type="submit" 
               className="submit-btn"
-              disabled={!account || isSubmitting || !isLocationAutoFilled} // Also disable if location not set
+              disabled={isSubmitting || !isLocationAutoFilled}
             >
-              {isSubmitting ? '⏳ Recording...' : '🌿 Record Collection on Blockchain'}
+              {isSubmitting ? '⏳ Uploading to IPFS...' : '🌿 Upload & Save Record (Pinata)'}
+            </button>
+            <button 
+              type="button" 
+              className="reset-btn"
+              onClick={resetForm}
+              disabled={isSubmitting}
+            >
+              Reset Form
             </button>
             {!isLocationAutoFilled && (
               <div className="location-required-warning">
@@ -285,50 +502,74 @@ const CollectionEvent = () => {
           </div>
           <div className="preview-card">
             <div className="preview-item">
+              <span>Farmer Name:</span>
+              <strong>{farmerName || 'Not specified'}</strong>
+            </div>
+            <div className="preview-item">
               <span>Species:</span>
-              <strong>{formData.species || 'Not specified'}</strong>
+              <strong>{species || 'Not specified'}</strong>
             </div>
             <div className="preview-item">
               <span>Weight:</span>
-              <strong>{formData.weight || '0'} kg</strong>
-            </div>
-            <div className="preview-item">
-              <span>Location:</span>
-              <strong>{formData.location || 'Not specified'}</strong>
+              <strong>{weight || '0'} kg</strong>
             </div>
             <div className="preview-item">
               <span>Harvest Date:</span>
-              <strong>{formData.harvestDate || 'Not specified'}</strong>
+              <strong>{harvestDate || 'Not specified'}</strong>
             </div>
-            {formData.qualityNotes && (
+            <div className="preview-item">
+              <span>Location:</span>
+              <strong>
+                {latitude && longitude ? `${latitude}, ${longitude}` : 'Not specified'}
+              </strong>
+            </div>
+            <div className="preview-item">
+              <span>Files:</span>
+              <strong>{files.length} file(s)</strong>
+            </div>
+            {qualityNotes && (
               <div className="preview-item">
                 <span>Quality Notes:</span>
-                <div className="notes-preview">{formData.qualityNotes}</div>
+                <div className="notes-preview">{qualityNotes}</div>
               </div>
             )}
           </div>
 
+          {results && (
+            <div className="results-section">
+              <h4>Upload Results</h4>
+              <div className="results-card">
+                <div className="result-item">
+                  <span>IPFS Metadata CID:</span>
+                  <a href={results.metadataGateway} target="_blank" rel="noopener noreferrer">
+                    {results.metadataCid}
+                  </a>
+                </div>
+                <div className="result-item">
+                  <span>Files Uploaded:</span>
+                  <span>{results.files.length}</span>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="blockchain-info">
-            <h4>Blockchain Status</h4>
+            <h4>Storage Information</h4>
             <div className="info-item">
-              <span>Wallet:</span>
-              <span className={account ? 'status-connected' : 'status-disconnected'}>
-                {account ? 'Connected' : 'Not Connected'}
-              </span>
+              <span>Storage Provider:</span>
+              <span>Pinata IPFS</span>
             </div>
             <div className="info-item">
               <span>Network:</span>
-              <span>Ethereum Mainnet</span>
+              <span>IPFS Distributed Storage</span>
             </div>
             <div className="info-item">
-              <span>Gas Fee:</span>
-              <span>~$2-5</span>
+              <span>Cost:</span>
+              <span>Free (Pinata)</span>
             </div>
           </div>
         </div>
       </div>
     </div>
   );
-};
-
-export default CollectionEvent;
+}
